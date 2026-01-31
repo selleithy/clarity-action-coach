@@ -879,14 +879,17 @@ Never provide a recommendation unless the user explicitly asks after reflecting.
             document.getElementById('typingIndicator').classList.add('active');
 
             try {
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                // IMPORTANT: Replace this URL with your actual AWS API Gateway URL
+                // Get it from API Gateway console - it looks like:
+                // https://abc123.execute-api.us-east-1.amazonaws.com/coach
+                const AWS_ENDPOINT = 'https://xxzxg1on16.execute-api.us-east-1.amazonaws.com/coach';
+                
+                const response = await fetch(AWS_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        model: 'claude-sonnet-4-20250514',
-                        max_tokens: 1000,
                         system: SYSTEM_PROMPT,
                         messages: conversationHistory
                     })
@@ -904,6 +907,8 @@ Never provide a recommendation unless the user explicitly asks after reflecting.
                     
                     addMessage(assistantMessage, 'assistant');
                     updateUI();
+                } else if (data.error) {
+                    throw new Error(data.error);
                 } else {
                     throw new Error('Invalid response format');
                 }
